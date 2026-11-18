@@ -13,6 +13,7 @@ import { QqConfigStore } from '../../src/channels/qq/config-store.mjs';
 import { SlackConfigStore } from '../../src/channels/slack/config-store.mjs';
 import { TelegramConfigStore } from '../../src/channels/telegram/config-store.mjs';
 import { DiscordConfigStore } from '../../src/channels/discord/config-store.mjs';
+import { KookConfigStore } from '../../src/channels/kook/config-store.mjs';
 import { WhatsappConfigStore } from '../../src/channels/whatsapp/config-store.mjs';
 import { IMessageConfigStore } from '../../src/channels/imessage/config-store.mjs';
 import { EmailConfigStore } from '../../src/channels/email/config-store.mjs';
@@ -29,7 +30,7 @@ const CHANNEL_STORES = [
   ['dingtalk', DingtalkConfigStore], ['wecom', WecomConfigStore],
   ['wecomApp', WecomAppConfigStore, 'wecom-app'], ['qq', QqConfigStore],
   ['slack', SlackConfigStore], ['telegram', TelegramConfigStore],
-  ['discord', DiscordConfigStore], ['whatsapp', WhatsappConfigStore],
+  ['discord', DiscordConfigStore], ['kook', KookConfigStore], ['whatsapp', WhatsappConfigStore],
   ['imessage', IMessageConfigStore], ['email', EmailConfigStore],
   ['matrix', MatrixConfigStore], ['office', OfficeConfigStore],
 ];

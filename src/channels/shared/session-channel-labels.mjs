@@ -7,6 +7,7 @@ export const SESSION_CHANNEL_LABELS = Object.freeze(Object.fromEntries(Object.en
   slack: ['Slack', 'Slack'],
   telegram: ['Telegram', 'Telegram'],
   discord: ['Discord', 'Discord'],
+  kook: ['KOOK', 'KOOK'],
   whatsapp: ['WhatsApp', 'WhatsApp'],
   imessage: ['iMessage', 'iMessage'],
   matrix: ['Matrix', 'Matrix'],

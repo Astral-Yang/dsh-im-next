@@ -1077,6 +1077,9 @@ export class TextHarnessBridge {
       sendImage: typeof this.#bot.sendImage === 'function'
         ? (file) => this.#bot.sendImage(target, file)
         : undefined,
+      sendVideo: typeof this.#bot.sendVideo === 'function'
+        ? (file) => this.#bot.sendVideo(target, file)
+        : undefined,
       sendFile: typeof this.#bot.sendFile === 'function'
         ? (file) => this.#bot.sendFile(target, file)
         : undefined,

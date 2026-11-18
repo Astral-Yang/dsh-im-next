@@ -5,6 +5,7 @@ import manifest from '../../package.json' with { type: 'json' };
 import {
   DingtalkLogoGlyph,
   DiscordLogoGlyph,
+  KookLogoGlyph,
   FeishuLogoGlyph,
   OfficeLogoGlyph,
   QqLogoGlyph,
@@ -22,6 +23,9 @@ import { DingtalkSettingsTab } from './channels/dingtalk/index.js';
 import { DISCORD_RPC_CHANNEL } from './channels/discord/api.js';
 import { DiscordSettingsTab } from './channels/discord/index.js';
 import { installDiscordStyles } from './channels/discord/styles.js';
+import { KOOK_RPC_CHANNEL } from './channels/kook/api.js';
+import { KookSettingsTab } from './channels/kook/index.js';
+import { installKookStyles } from './channels/kook/styles.js';
 import { FeishuSettingsTab } from './channels/feishu/index.js';
 import { FEISHU_RPC_CHANNEL } from './channels/feishu/api.js';
 import { installFeishuStyles } from './channels/feishu/styles.js';
@@ -112,6 +116,7 @@ const CHANNELS = Object.freeze([
   { id: 'slack', label: 'Slack' },
   { id: 'telegram', label: 'Telegram' },
   { id: 'discord', label: 'Discord' },
+  { id: 'kook', label: 'KOOK' },
   { id: 'whatsapp', label: 'WhatsApp' },
   { id: 'wecomApp', label: '企业微信应用', note: '（实验功能）' },
   { id: 'imessage', label: 'iMessage', note: '（实验功能）' },
@@ -162,6 +167,11 @@ function DiscordLogo() {
     h(DiscordLogoGlyph));
 }
 
+function KookLogo() {
+  return h('span', { className: 'dim-logo dim-logoKook', 'aria-hidden': 'true' },
+    h(KookLogoGlyph));
+}
+
 function WhatsappLogo() {
   return h('span', { className: 'dim-logo dim-logoWhatsapp', 'aria-hidden': 'true' },
     h(WhatsappLogoGlyph));
@@ -197,6 +207,7 @@ function ChannelLogo({ channel }) {
   if (channel === 'slack') return h(SlackLogo);
   if (channel === 'telegram') return h(TelegramLogo);
   if (channel === 'discord') return h(DiscordLogo);
+  if (channel === 'kook') return h(KookLogo);
   if (channel === 'whatsapp') return h(WhatsappLogo);
   if (channel === 'imessage') return h(IMessageLogo);
   if (channel === 'email') return h(EmailLogo);
@@ -223,6 +234,7 @@ export function LoopbackRecoveryNotice({ recovery, onNavigate = replacePageLocat
 export function IMSettingsTab({
   dingtalkRpcCall,
   discordRpcCall,
+  kookRpcCall,
   feishuRpcCall,
   imessageRpcCall,
   emailRpcCall,
@@ -282,6 +294,7 @@ export function IMSettingsTab({
   const rpcCalls = React.useMemo(() => createLoopbackAwareRpcCalls({
     dingtalkRpcCall,
     discordRpcCall,
+    kookRpcCall,
     feishuRpcCall,
     qqRpcCall,
     slackRpcCall,
@@ -306,6 +319,7 @@ export function IMSettingsTab({
     browserLocation,
     dingtalkRpcCall,
     discordRpcCall,
+    kookRpcCall,
     deliveryRpcCall,
     feishuRpcCall,
     globalSettingsRpcCall,
@@ -470,6 +484,8 @@ export function IMSettingsTab({
                       ? h(TelegramSettingsTab, { rpcCall: rpcCalls.telegramRpcCall })
                       : active.id === 'discord'
                         ? h(DiscordSettingsTab, { rpcCall: rpcCalls.discordRpcCall })
+                        : active.id === 'kook'
+                          ? h(KookSettingsTab, { rpcCall: rpcCalls.kookRpcCall })
                         : active.id === 'whatsapp'
                           ? h(WhatsappSettingsTab, { rpcCall: rpcCalls.whatsappRpcCall })
                           : active.id === 'imessage'
@@ -529,6 +545,7 @@ export function apply(ctx) {
       installSlackStyles(),
       installTelegramStyles(),
       installDiscordStyles(),
+      installKookStyles(),
       installWhatsappStyles(),
       installIMessageStyles(),
       installEmailStyles(),
@@ -568,6 +585,8 @@ export function apply(ctx) {
     managementRpc(ctx.connection, TELEGRAM_RPC_CHANNEL, endpoint, payload, signal);
   const discordRpcCall = (endpoint, payload, signal) =>
     managementRpc(ctx.connection, DISCORD_RPC_CHANNEL, endpoint, payload, signal);
+  const kookRpcCall = (endpoint, payload, signal) =>
+    managementRpc(ctx.connection, KOOK_RPC_CHANNEL, endpoint, payload, signal);
   const whatsappRpcCall = (endpoint, payload, signal) =>
     managementRpc(ctx.connection, WHATSAPP_RPC_CHANNEL, endpoint, payload, signal);
   const imessageRpcCall = (endpoint, payload, signal) =>
@@ -602,6 +621,7 @@ export function apply(ctx) {
   const panelDependencies = {
     dingtalkRpcCall,
     discordRpcCall,
+    kookRpcCall,
     feishuRpcCall,
     qqRpcCall,
     slackRpcCall,

@@ -17,6 +17,7 @@ export const CHANNEL_CAPABILITIES = Object.freeze({
   telegram: Object.freeze({ buttons: true, fileSend: true }),
   slack: Object.freeze({ buttons: false, fileSend: true }),
   discord: Object.freeze({ buttons: false, fileSend: true }),
+  kook: Object.freeze({ buttons: false, fileSend: true }),
   // Feishu and DingTalk have their own native card/button systems that are not
   // wired through the shared sendInteractionCard seam, and their file send is
   // not exposed through the shared sendFile seam either — so neither is

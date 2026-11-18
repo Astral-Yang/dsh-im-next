@@ -27,6 +27,10 @@ export function groupHistoryEntry(channel, raw, message, { scope = '', groupName
       type: item.document ? 'file' : item.photo ? 'image' : 'text',
       capability: '关闭 Privacy Mode 或设为群管理员后才能接收普通群消息；只保存平台实际投递的消息。' };
   }
+  if (channel === 'kook') return { ...common, scope: String(raw.extra?.guild_id ?? ''), groupId: raw.target_id,
+    messageId: raw.msg_id, sentAt: raw.msg_timestamp ?? Date.now(), text: message.content,
+    type: message.files?.length ? 'file' : message.images?.length ? 'image' : 'text',
+    capability: '需要机器人拥有频道消息权限；只保存平台实际投递的消息。' };
   if (channel === 'discord') return { ...common, scope: String(raw.guild_id ?? ''), groupId: raw.channel_id,
     messageId: raw.id, sentAt: raw.timestamp, text: raw.content ?? '', type: raw.attachments?.length ? 'file' : 'text',
     replyToMessageId: raw.message_reference?.message_id,

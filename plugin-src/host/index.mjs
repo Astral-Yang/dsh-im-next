@@ -1,6 +1,7 @@
 import { installGroupHistoryTools } from '../../src/channels/shared/group-history-access.mjs';
 import { apply as applyDingtalk } from './channels/dingtalk/index.mjs';
 import { apply as applyDiscord } from './channels/discord/index.mjs';
+import { apply as applyKook } from './channels/kook/index.mjs';
 import { apply as applyOffice } from './channels/office/index.mjs';
 import { apply as applyFeishu } from './channels/feishu/index.mjs';
 import { apply as applyQq } from './channels/qq/index.mjs';
@@ -73,6 +74,7 @@ export function createImHostPlugin(internals = {}) {
   const startSlack = internals.applySlack ?? applySlack;
   const startTelegram = internals.applyTelegram ?? applyTelegram;
   const startDiscord = internals.applyDiscord ?? applyDiscord;
+  const startKook = internals.applyKook ?? applyKook;
   const startOffice = internals.applyOffice ?? applyOffice;
   const startWhatsapp = internals.applyWhatsapp ?? applyWhatsapp;
   const startIMessage = internals.applyIMessage ?? applyIMessage;
@@ -88,6 +90,7 @@ export function createImHostPlugin(internals = {}) {
     ['slack', startSlack],
     ['telegram', startTelegram],
     ['discord', startDiscord],
+    ['kook', startKook],
     ['whatsapp', startWhatsapp],
     ['imessage', startIMessage],
     ['email', startEmail],

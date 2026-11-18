@@ -10,6 +10,7 @@ const sourceDirectory = dirname(fileURLToPath(import.meta.url));
 const packageRoot = resolve(sourceDirectory, '../..');
 const outputPath = resolve(packageRoot, 'lib/index.js');
 const externalRuntimePackages = [
+  '@kookapp/js-sdk',
   '@tencent-connect/qqbot-connector',
   '@tencent-connect/qqbot-nodejs',
   '@wecom/aibot-node-sdk',

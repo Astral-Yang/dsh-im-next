@@ -20,6 +20,7 @@ import weixin from './i18n-ru/weixin.mjs';
 import slack from './i18n-ru/slack.mjs';
 import telegram from './i18n-ru/telegram.mjs';
 import discord from './i18n-ru/discord.mjs';
+import kook from './i18n-ru/kook.mjs';
 import whatsapp from './i18n-ru/whatsapp.mjs';
 import matrix from './i18n-ru/matrix.mjs';
 import office from './i18n-ru/office.mjs';
@@ -43,6 +44,7 @@ export const RU = Object.freeze(Object.assign(
   slack,
   telegram,
   discord,
+  kook,
   whatsapp,
   matrix,
   office,

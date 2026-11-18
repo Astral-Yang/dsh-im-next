@@ -67,7 +67,7 @@ export async function createTokenProductionController(ctx, config, internals, de
     ? definitions.initialAccessPolicyForBot
     // Telegram is the only token channel with a legacy access model. Other
     // current token channels preserve their fully-open baseline.
-    : (bot) => initialAccessPolicyFor(channel === 'telegram' ? 'telegram' : 'discord', bot);
+    : (bot) => initialAccessPolicyFor(channel === 'telegram' ? 'telegram' : channel === 'kook' ? 'kook' : 'discord', bot);
   const logger = typeof ctx.logger === 'function'
     ? ctx.logger(`dsh-im:${channel}`) : (ctx.logger ?? console);
   const agentPresetCatalog = () => listAgentPresetCatalog(ctx);
@@ -216,7 +216,7 @@ export async function createTokenProductionController(ctx, config, internals, de
         commandCatalog: availableCommandCatalog(SHARED_COMMAND_CATALOG, {
           supportsFork: harness.supportsSessionFork?.(),
         }),
-        groupHistory: internals.groupHistory ?? (['telegram', 'discord'].includes(channel) ? getGroupHistoryStore(ctx, config) : undefined),
+        groupHistory: internals.groupHistory ?? (['telegram', 'discord', 'kook'].includes(channel) ? getGroupHistoryStore(ctx, config) : undefined),
         // A transport that carries voice notes composes its own transcriber
         // from Host services; without one voice messages stay textless.
         ...(typeof definitions.createVoiceTranscriber === 'function'

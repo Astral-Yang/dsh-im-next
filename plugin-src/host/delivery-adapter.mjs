@@ -21,6 +21,7 @@ const CHANNELS = new Set([
   'slack',
   'telegram',
   'discord',
+  'kook',
   'whatsapp',
   'imessage',
   'email',
@@ -121,6 +122,9 @@ function normalizeRoute(channel, kind, route) {
     case 'discord':
       oneOf(kind, ['channel']);
       return routeWithStrings(route, ['channelId']);
+    case 'kook':
+      oneOf(kind, ['user', 'channel']);
+      return routeWithStrings(route, kind === 'user' ? ['userId'] : ['channelId']);
     case 'whatsapp': {
       oneOf(kind, ['user', 'group']);
       const normalized = routeWithStrings(route, ['jid']);
