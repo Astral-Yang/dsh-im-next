@@ -1158,6 +1158,15 @@ export class TextHarnessBridge {
         ].join('\n'));
         return;
       }
+      if (!hasImages && !hasFiles && /^\/sid(?:\s|$)/u.test(command)
+        && this.#descriptor.supportsSid === true) {
+        const lines = [t('当前用户 ID：{id}', { id: senderId })];
+        if (message.kind === 'group') {
+          lines.push(t('当前频道 ID：{id}', { id: message.conversationId }));
+        }
+        await this.#bot.sendText(target, lines.join('\n'));
+        return;
+      }
       if (!hasImages && !hasFiles && command === '/status') {
         const status = await runStatusCommand({
           descriptor: this.#descriptor,

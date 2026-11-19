@@ -4,6 +4,7 @@ export const KOOK_DESCRIPTOR = Object.freeze({
   key: 'kook',
   label: 'KOOK',
   connectionLabel: ' Gateway 长连接',
+  supportsSid: true,
   reactions: Object.freeze({
     processing: '[#128064;]',
     success: '[#9989;]',

@@ -3,12 +3,15 @@ import { t } from './i18n.mjs';
 const TEXT_CHANNELS = Object.freeze(['telegram', 'slack', 'discord', 'kook', 'whatsapp', 'matrix']);
 
 function defineCatalogCommand(name, description, help, { aliases = [], ...options } = {}) {
+  // A per-command channel list arrives as a literal; freeze the copy so the
+  // catalog stays immutable no matter how narrow the entry is.
+  const channels = Object.freeze([...(options.channels ?? TEXT_CHANNELS)]);
   return Object.freeze({
     name,
     description,
-    channels: TEXT_CHANNELS,
     menuVisible: true,
     ...options,
+    channels,
     aliases: Object.freeze(aliases.map((alias) => Object.freeze({
       menuVisible: true,
       ...(typeof alias === 'string' ? { name: alias } : alias),
@@ -145,6 +148,9 @@ export const SHARED_COMMAND_CATALOG = Object.freeze([
   defineCatalogCommand('cancel', '取消当前批次', [
     '/cancel  取消当前批次',
   ], { privateOnly: true }),
+  defineCatalogCommand('sid', '查看当前用户 ID', [
+    '/sid  查看当前用户 ID（用于访问白名单）',
+  ], { channels: ['kook'] }),
   defineCatalogCommand('status', '检查连接状态', [
     '/status  检查连接状态',
   ]),
