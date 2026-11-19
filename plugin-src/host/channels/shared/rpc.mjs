@@ -140,7 +140,7 @@ function operationError(channel, error) {
   if (error?.code === 'webhook-configured') {
     return { code: 'webhook-configured', message: error.message };
   }
-  if (error?.code === 'telegram-401' || error?.code === 'discord-401') {
+  if (error?.code === 'telegram-401' || error?.code === 'discord-401' || error?.code === 'kook-401') {
     return { code: 'invalid-token', message: `${channel} Bot Token 无效，请重新填写。` };
   }
   if (channel === 'Telegram' && TELEGRAM_NETWORK_ERRORS.has(error?.code)) {

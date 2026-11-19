@@ -27,6 +27,7 @@
     <img src="https://img.shields.io/badge/Slack-4A154B?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0iI2ZmZiIgZD0iTTYgMTVhMiAyIDAgMSAxLTItMmgydjJabTEgMGEyIDIgMCAxIDEgNCAwdjVhMiAyIDAgMSAxLTQgMHYtNVptMi04YTIgMiAwIDEgMSAyLTJ2Mkg5Wm0wIDFhMiAyIDAgMSAxIDAgNEg0YTIgMiAwIDEgMSAwLTRoNVptOCAyYTIgMiAwIDEgMSAyIDJoLTJ2LTJabS0xIDBhMiAyIDAgMSAxLTQgMFY1YTIgMiAwIDEgMSA0IDB2NVptLTIgOGEyIDIgMCAxIDEtMiAydi0yaDJabTAtMWEyIDIgMCAxIDEgMC00aDVhMiAyIDAgMSAxIDAgNGgtNVoiLz48L3N2Zz4%3D" alt="Slack">
     <img src="https://img.shields.io/badge/Telegram-26A5E4?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0iI2ZmZiIgZD0iTTIzLjk1IDQuNTdjLS4zNi0xLjQ1LTEuNDMtMS43Ni0yLjgyLTEuMjRMMS41IDEwLjljLTEuMzQuNTItMS4zMiAxLjI3LS4yNCAxLjZsNS4wMyAxLjU3IDExLjY2LTcuMzZjLjU1LS4zNCAxLjA1LS4xNi42NC4yMWwtOS40NCA4LjUyLS4zNyA1LjEyYy41NCAwIC43OC0uMjQgMS4wOC0uNTNsMi41OS0yLjUxIDUuMzggMy45N2MuOTkuNTUgMS43LjI3IDEuOTUtLjkyTDIzLjk1IDQuNTdaIi8%2BPC9zdmc%2B" alt="Telegram">
     <img src="https://img.shields.io/badge/Discord-5865F2?logo=discord&amp;logoColor=white" alt="Discord">
+    <img src="https://img.shields.io/badge/KOOK-00A1E9" alt="KOOK">
     <img src="https://img.shields.io/badge/WhatsApp-25D366?logo=whatsapp&amp;logoColor=white" alt="WhatsApp">
     <img src="https://img.shields.io/badge/iMessage-34C759?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0iI2ZmZiIgZD0iTTEyIDNDNS45MjUgMyAxIDcuMDI5IDEgMTJjMCAyLjc1MSAxLjUxNCA1LjIxNCAzLjkwMSA2Ljg2NS4yOTEgMS41MjYtLjE3NCAyLjY0OC0xLjI1OCAzLjY0IDIuMDQ3LjAyNSAzLjQ0Mi0uNTA5IDQuNjQzLTEuNThBMTMuMiAxMy4yIDAgMCAwIDEyIDIxYzYuMDc1IDAgMTEtNC4wMjkgMTEtOVMxOC4wNzUgMyAxMiAzWiIvPjwvc3ZnPg%3D%3D" alt="iMessage">
   </p>
@@ -116,6 +117,7 @@ Connect IM bots to DeepSeek Harness by scanning a QR code, using an App Manifest
 | Slack | 使用预置 App Manifest 创建应用，再填写 Bot Token（`xoxb-`）和 App Token（`xapp-`） | Socket Mode 长连接；私聊直接回复，频道被 @ 后响应，优先使用官方流式消息 API |
 | Telegram | 使用 @BotFather 生成的 Bot Token | Bot API 长轮询；默认私聊直接响应、群聊被提及或回复时响应，也可为每个机器人独立启用私聊白名单安全模式；关闭思考过程留痕时，私聊、群聊和 Topic 均通过占位消息编辑展示进度并原位完成富文本回复，避免 Android 私聊 Draft 占用发送入口，平台不支持富文本时回退为普通文字 |
 | Discord | 使用 Developer Portal 生成的 Bot Token | Gateway v10 长连接；私信直接回复；服务器文字/公告频道首次 @ 后创建原生 Thread，后续在线程中无需重复 @，并通过编辑消息流式显示回答 |
+| KOOK | 使用 KOOK 开发者平台的 Bot Token | Gateway 长连接；支持频道与私聊文字消息；图片、文件通过 KOOK 资源上传后发送 |
 | WhatsApp | 使用手机 WhatsApp 扫码关联设备 | WhatsApp Web 长连接；默认仅响应账号自聊，也可切换到指定联系人或开放响应模式；群聊仅在被 @ 或回复机器人消息时触发，主人普通发言不触发；显示已读和“正在输入”，通过每秒编辑同一条消息显示工具进度和逐步生成的回答，长回复自动分段，编辑失败时回退为完整文字回复 |
 | iMessage | 在 macOS Messages.app 中登录 iMessage，并按[渠道说明](docs/imessage.md)授予本机权限 | 使用 macOS 原生 Messages.app 收发文本私聊；不依赖 BlueBubbles；每个 macOS 用户账户使用一个本机 iMessage 身份 |
 | Matrix（实验功能） | 填写 homeserver 地址，并提供访问令牌，或用户 ID 与密码 | CS API 长轮询接收；私聊直接回复，房间被 @ 后响应，支持线程回复、HTML 白名单富文本与编辑式流式输出，可回传图片和结果文件；包含实验性房间消息加解密，限制见下文 |

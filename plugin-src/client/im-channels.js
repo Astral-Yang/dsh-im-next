@@ -17,6 +17,7 @@ const CHANNEL_LABELS = Object.freeze({
   dingtalk: '钉钉',
   slack: 'Slack',
   discord: 'Discord',
+  kook: 'KOOK',
   line: 'LINE',
   qq: 'QQ',
 });

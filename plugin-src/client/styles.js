@@ -147,6 +147,8 @@ const CSS = String.raw`
 .dim-logoOffice svg { width: 23px; height: 23px; }
 .dim-logoDiscord { color: white; background: #5865f2; }
 .dim-logoDiscord svg { width: 21px; height: 21px; }
+.dim-logoKook { background: transparent; }
+.dim-logoKook svg { width: 30px; height: 30px; border-radius: 9px; }
 .dim-logoSlack { background: linear-gradient(145deg, #fff, #f8fafb); border: 1px solid #e5e6eb; }
 .dim-logoSlack svg { width: 21px; height: 21px; }
 .dim-logoWhatsapp { color: white; background: #25d366; }

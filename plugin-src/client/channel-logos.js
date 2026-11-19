@@ -188,3 +188,22 @@ export function EmailLogoGlyph({ size } = {}) {
   },
   h('path', { fill: 'currentColor', d: 'M3.2 5.6h17.6c.66 0 1.2.54 1.2 1.2v10.4c0 .66-.54 1.2-1.2 1.2H3.2A1.2 1.2 0 0 1 2 17.2V6.8c0-.66.54-1.2 1.2-1.2Zm.9 1.7v.28L12 12.3l7.9-4.72V7.3H4.1Zm15.8 2.02-7.42 4.43a1 1 0 0 1-1.06 0L4.1 9.32v7.78h15.8V9.32Z' }));
 }
+
+export function KookLogoGlyph({ size } = {}) {
+  return h('svg', {
+    ...dimensions(size),
+    viewBox: '0 0 256 256',
+    focusable: 'false',
+    'aria-hidden': 'true',
+    'data-im-channel-logo': 'kook',
+  },
+  h('rect', { width: 256, height: 256, rx: 56, fill: '#87EB00' }),
+  h('path', {
+    fill: '#000',
+    d: 'M69 53H202L212 73 187 191H148L143 218H128L114 191H54L44 171Z',
+  }),
+  h('path', {
+    fill: '#FFF',
+    d: 'M94 68H125L120 94 143 68H174L172 81 137 121 156 156 154 167H125L110 141 105 167H73Z',
+  }));
+}

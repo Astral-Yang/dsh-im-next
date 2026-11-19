@@ -126,6 +126,14 @@ const CHANNEL_DEFINITIONS = Object.freeze({
     kinds: [{ value: 'channel', label: '频道或私信' }],
     fields: { channel: [{ key: 'channelId', label: 'Channel ID', placeholder: '填写可发消息的 Channel ID', inputMode: 'numeric' }] },
   },
+  kook: {
+    label: 'KOOK',
+    kinds: [{ value: 'user', label: '私聊' }, { value: 'channel', label: '频道' }],
+    fields: {
+      user: [{ key: 'userId', label: '用户 ID', placeholder: '填写 KOOK 用户 ID' }],
+      channel: [{ key: 'channelId', label: '频道 ID', placeholder: '填写 KOOK 频道 ID' }],
+    },
+  },
   whatsapp: {
     label: 'WhatsApp',
     kinds: [{ value: 'user', label: '用户' }, { value: 'group', label: '群聊' }],

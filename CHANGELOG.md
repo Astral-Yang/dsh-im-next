@@ -8,6 +8,9 @@ This file records the notable changes in each dsh-im release. Its format follows
 
 ### Added / 新增
 
+- 新增 KOOK 渠道：通过 KOOK 开发者平台的 Bot Token 接入，支持频道与私聊文字消息、群聊 @ 触发、访问控制、图片/文件/视频发送、群消息记录及主动投递；连接层使用 `@kookapp/js-sdk` 的 Gateway 长连接与自动重连。
+  Added a KOOK channel: connect with a Bot Token from the KOOK developer platform and use channel and private text messages, group @ mentions, access control, image/file/video delivery, group history, and proactive delivery; the connection layer uses `@kookapp/js-sdk` Gateway long connections with automatic reconnect.
+
 - 新增 `/sessionarchive <Session ID>`（别名 `/sessarchive`）：通过 Discord 等渠道触发 DSH 的会话归档（`workspace.archiveSession`）。传序号只做预览（标题、工作区、ID），不会执行归档——会话列表随新会话出现而位移，按序号直接归档会归档到错误会话；破坏性操作必须点名完整 ID。机器人只负责解析目标并转达 Host 结果，拒绝归档本对话当前绑定的会话与已归档会话；`--stop` 让 Host 先停止该会话正在运行的任务。归档后的会话不再出现在默认的 `/sessionlist`。
   Added `/sessionarchive <Session ID>` (alias `/sessarchive`) to trigger DSH Session archiving; a numerical argument only previews the Session behind that index (title, workspace, ID) and never archives, because the list shifts and archiving by index would hit the wrong Session — destructive actions must name the full ID (`workspace.archiveSession`) from the chat. The bot only resolves the target and relays the Host result; it refuses the Session this chat is bound to and one that is already archived, and `--stop` lets the Host stop that Session's running work. Archived Sessions leave the default `/sessionlist`.
 

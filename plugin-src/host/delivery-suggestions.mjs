@@ -10,6 +10,7 @@ const CHANNELS = new Set([
   'slack',
   'telegram',
   'discord',
+  'kook',
   'whatsapp',
   'imessage',
   'matrix',
@@ -79,6 +80,13 @@ function discordSuggestion(key) {
   return match ? { kind: 'channel', route: { channelId: match[1] } } : null;
 }
 
+function kookSuggestion(key) {
+  const direct = /^direct:([A-Za-z0-9_-]{1,128})$/.exec(key);
+  if (direct) return { kind: 'user', route: { userId: direct[1] } };
+  const group = /^group:([A-Za-z0-9_-]{1,128})$/.exec(key);
+  return group ? { kind: 'channel', route: { channelId: group[1] } } : null;
+}
+
 function whatsappSuggestion(key) {
   const direct = /^direct:(\d{5,32}@(s\.whatsapp\.net|lid))$/.exec(key);
   if (direct) return { kind: 'user', route: { jid: direct[1] } };
@@ -126,6 +134,8 @@ export function deliverySuggestionFromConversationKey(channel, key) {
       return telegramSuggestion(key);
     case 'discord':
       return discordSuggestion(key);
+    case 'kook':
+      return kookSuggestion(key);
     case 'whatsapp':
       return whatsappSuggestion(key);
     case 'imessage': {
@@ -159,6 +169,7 @@ export function privateDeliverySuggestionFromConversationKey(channel, key) {
     slack: 'direct',
     telegram: 'direct',
     discord: 'direct',
+    kook: 'direct',
     whatsapp: 'direct',
     imessage: 'direct',
     matrix: 'dm',

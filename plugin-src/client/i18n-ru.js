@@ -1048,6 +1048,18 @@ const CLIENT = Object.freeze({
   'Telegram 访问设置暂不可用。': 'Настройки доступа Telegram сейчас недоступны.',
   'Telegram 访问设置保存失败。': 'Не удалось сохранить настройки доступа Telegram.',
   '接入 Discord 机器人': 'Подключить бота Discord',
+  '接入 KOOK 机器人': 'Подключить бота KOOK',
+  '先在 KOOK 开发者平台创建机器人并邀请到服务器，再在这里完成接入。':
+    'Сначала создайте бота на платформе разработчика KOOK и пригласите его на сервер, затем подключите здесь.',
+  '填写 KOOK 开发者平台的 Bot Token': 'Введите Bot Token из платформы разработчика KOOK',
+  'KOOK 开发者平台': 'Платформа разработчика KOOK',
+  'KOOK机器人': 'Бот KOOK',
+  'KOOK Bot Token 无效，请重新填写。': 'Токен KOOK Bot недействителен. Введите его заново.',
+  'KOOK 用户 ID': 'ID пользователя KOOK',
+  '填写 KOOK 用户 ID': 'Введите ID пользователя KOOK',
+  '频道': 'Канал',
+  '频道 ID': 'ID канала',
+  '填写 KOOK 频道 ID': 'Введите ID канала KOOK',
   '先在 Developer Portal 创建 Bot 并邀请到服务器，再在这里完成接入。':
     'Сначала создайте бота в Developer Portal и пригласите его на сервер, затем подключите здесь.',
   '填写 Discord Developer Portal 的 Bot Token': 'Введите Bot Token из Discord Developer Portal',
@@ -1099,6 +1111,7 @@ const CLIENT = Object.freeze({
   '使用 Manifest 和双 Token 接入 Slack 机器人': 'Подключить бота Slack по Manifest и двум токенам',
   '使用 Bot Token 接入 Telegram 机器人': 'Подключить бота Telegram по Bot Token',
   '使用 Bot Token 接入 Discord 机器人': 'Подключить бота Discord по Bot Token',
+  '使用 Bot Token 接入 KOOK 机器人': 'Подключить бота KOOK по Bot Token',
   '取消接入': 'Отменить подключение',
   '二维码由腾讯微信 iLink 服务签发。用手机微信扫描并确认后，账号凭据会直接写入 Harness Host，浏览器不会收到 bot_token。':
     'QR-код выдаёт служба iLink от Tencent WeChat. После сканирования и подтверждения в WeChat на телефоне учётные данные аккаунта записываются сразу в Harness Host, а браузер не получает bot_token.',

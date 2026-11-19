@@ -1,7 +1,7 @@
 import { parseSessionChannelTitle } from '../../src/channels/shared/session-channel-labels.mjs';
 import {
   WeixinLogoGlyph, FeishuLogoGlyph, DingtalkLogoGlyph, WecomLogoGlyph, QqLogoGlyph,
-  SlackLogoGlyph, TelegramLogoGlyph, DiscordLogoGlyph, WhatsappLogoGlyph, OfficeLogoGlyph,
+  SlackLogoGlyph, TelegramLogoGlyph, DiscordLogoGlyph, KookLogoGlyph, WhatsappLogoGlyph, OfficeLogoGlyph,
   IMessageLogoGlyph, MatrixLogoGlyph,
 } from './channel-logos.js';
 
@@ -14,6 +14,7 @@ const GLYPHS = Object.freeze({
   slack: [SlackLogoGlyph, '#e01e5a'],
   telegram: [TelegramLogoGlyph, '#229ed9'],
   discord: [DiscordLogoGlyph, '#5865f2'],
+  kook: [KookLogoGlyph, '#00a1e9'],
   whatsapp: [WhatsappLogoGlyph, '#25d366'],
   imessage: [IMessageLogoGlyph, '#3478f6'],
   matrix: [MatrixLogoGlyph, '#1a8f6f'],
@@ -48,7 +49,7 @@ function titleOf(row) {
 function logoUri(document, channel) {
   const [Glyph, color] = GLYPHS[channel];
   const render = (node) => {
-    if (!['svg', 'path'].includes(node.type)) throw new Error('Unsupported channel logo element');
+    if (!['svg', 'path', 'rect', 'image'].includes(node.type)) throw new Error('Unsupported channel logo element');
     const element = document.createElementNS(SVG_NS, node.type);
     for (const [name, value] of Object.entries(node.props)) {
       if (name === 'children') continue;

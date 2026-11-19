@@ -9,6 +9,7 @@ const stages = new WeakMap();
 const OWNED_REASONS = { 'harness-interaction-timeout': 'timeout', 'harness-response-invalid': 'invalid-response', 'connect-timeout': 'timeout', 'telegram-timeout': 'timeout', 'cli-timeout': 'timeout', 'provider-timeout': 'timeout', 'telegram-response-invalid': 'invalid-response', 'office-protocol-mismatch': 'invalid-response' };
 const KNOWN_MESSAGES = {
   'discord-401': 'Discord Bot Token 无效，请重新填写。',
+  'kook-401': 'KOOK Bot Token 无效，请重新填写。',
   'discord-intents': 'Discord Gateway Intents 配置不正确，请检查 Developer Portal 的 Bot 设置。',
   'webhook-configured': '该 Telegram 机器人已配置 Webhook，请先在原服务中移除 Webhook 后重试。',
   'invalid-device-token': 'AI Office Device Token 无效。',

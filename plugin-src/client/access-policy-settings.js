@@ -64,6 +64,12 @@ export const ACCESS_CHANNEL_DEFINITIONS = Object.freeze({
     groupUserLabel: '群成员 User ID',
     groupPlaceholder: '填写数字 User ID',
   }),
+  kook: Object.freeze({
+    directUserLabel: 'KOOK 用户 ID',
+    directPlaceholder: '填写 KOOK 用户 ID',
+    groupUserLabel: '群成员用户 ID',
+    groupPlaceholder: '填写 KOOK 用户 ID',
+  }),
   whatsapp: Object.freeze({
     directUserLabel: 'WhatsApp 电话号码或 JID',
     directPlaceholder: '8613800000000 或完整 JID',
