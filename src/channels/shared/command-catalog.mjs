@@ -145,6 +145,9 @@ export const SHARED_COMMAND_CATALOG = Object.freeze([
   defineCatalogCommand('cancel', '取消当前批次', [
     '/cancel  取消当前批次',
   ], { privateOnly: true }),
+  defineCatalogCommand('sid', '查看当前用户 ID', [
+    '/sid  查看当前用户 ID（用于访问白名单）',
+  ], { channels: ['kook'] }),
   defineCatalogCommand('status', '检查连接状态', [
     '/status  检查连接状态',
   ]),
