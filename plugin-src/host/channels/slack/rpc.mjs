@@ -16,6 +16,7 @@ import {
   validAgentPresetPayload,
 } from '../shared/agent-preset-rpc.mjs';
 import { SET_MODEL_ENDPOINT, validModelPayload } from '../shared/model-setting-rpc.mjs';
+import { SET_REACTIONS_ENDPOINT, validReactionsPayload } from '../shared/reactions-rpc.mjs';
 
 export const SLACK_RPC_CHANNEL = '/slack';
 export const SLACK_ENDPOINTS = Object.freeze({
@@ -30,6 +31,7 @@ export const SLACK_ENDPOINTS = Object.freeze({
   setBusyMessageMode: SET_MESSAGE_MODE_ENDPOINT,
   setAccessPolicy: SET_ACCESS_POLICY_ENDPOINT,
   setAlias: SET_ALIAS_ENDPOINT,
+  setReactions: SET_REACTIONS_ENDPOINT,
 });
 export const SLACK_RPC_ENDPOINTS = Object.freeze(Object.values(SLACK_ENDPOINTS));
 
@@ -105,6 +107,10 @@ function payloadFailure(endpoint, payload) {
   if (endpoint === SLACK_ENDPOINTS.setAlias) {
     return validAliasPayload(payload)
       ? null : '请输入有效的别名（最多 80 个字符）。';
+  }
+  if (endpoint === SLACK_ENDPOINTS.setReactions) {
+    return validReactionsPayload(payload)
+      ? null : '请提交有效的回应表情设置。';
   }
   return 'Unknown Slack endpoint.';
 }
@@ -201,6 +207,10 @@ export function createSlackRpcHandler(controller) {
       else if (endpoint === SLACK_ENDPOINTS.setAlias) {
         if (typeof controller.updateAlias !== 'function') throw new Error('Alias update is unavailable');
         value = await controller.updateAlias(payload.botId, payload.alias);
+      }
+      else if (endpoint === SLACK_ENDPOINTS.setReactions) {
+        if (typeof controller.updateReactions !== 'function') throw new Error('Reaction update is unavailable');
+        value = await controller.updateReactions(payload.botId, payload.reactions);
       }
       else if (endpoint === SLACK_ENDPOINTS.setAccessPolicy) {
         if (typeof controller.updateAccessPolicy !== 'function') throw new Error('Access policy update is unavailable');

@@ -436,6 +436,19 @@ const CSS = String.raw`
 .dim-collapsibleHead { min-width: 0; display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; -webkit-user-select: none; }
 .dim-collapsibleHeaderContent { min-width: 0; flex: 1 1 auto; display: flex; align-items: center; }
 /* Keep the original header footprint; center both icons with equal side space. */
+/* Status reactions: one input row per state, shared by every reacting channel. */
+.dim-reactions { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--dsw-alias-border-l2, #eceef1); }
+.dim-reactionsTitle { margin: 0 0 6px; font-size: 12px; font-weight: 600; color: var(--dsw-alias-label-secondary, #646a73); letter-spacing: 0.02em; }
+.dim-reactionsIntro { margin: 0 0 8px; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary, #8a919f); }
+.dim-reactionsRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; cursor: pointer; }
+.dim-reactionsText { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.dim-reactionsLabel { font-size: 13px; font-weight: 500; color: var(--dsw-alias-label, #1f2329); }
+.dim-reactionsHint { font-size: 12px; color: var(--dsw-alias-label-tertiary, #8a919f); }
+.dim-reactionsInput { flex: none; width: 120px; margin: 0; padding: 4px 8px; border: 1px solid var(--dsw-alias-border-l2, #dfe1e5); border-radius: 6px; background: var(--dsw-alias-bg-layer-1, #fff); color: var(--dsw-alias-label-primary, #1f2329); font: inherit; font-size: 13px; line-height: 20px; }
+.dim-reactionsInput:disabled { opacity: 0.5; cursor: not-allowed; }
+.dim-reactionsControl { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; max-width: 62%; }
+.dim-reactionsHintError { color: var(--dsw-alias-state-danger-primary, #c53030); }
+.dim-reactionsCode { font: 11px/16px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--dsw-alias-label-tertiary, #8f959e); }
 .dim-accountSettingsToggle { flex: none; width: 45px; height: 32px; display: inline-flex; gap: 5px; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 8px; color: var(--dsw-alias-state-business-primary, #3370ff); background: color-mix(in srgb, var(--dsw-alias-state-business-primary, #3370ff) 8%, var(--dsw-alias-bg-layer-1, #fff)); cursor: pointer; }
 .dim-accountSettingsToggle > svg { flex: none; display: block; }
 .dim-accountSettingsToggle:hover { background: color-mix(in srgb, var(--dsw-alias-state-business-primary, #3370ff) 14%, var(--dsw-alias-bg-layer-1, #fff)); }

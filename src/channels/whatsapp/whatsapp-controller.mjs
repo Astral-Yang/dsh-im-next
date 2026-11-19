@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { connectionTestMessage } from '../shared/connection-test.mjs';
 import { t } from '../shared/i18n.mjs';
 import { publicMessageFailure } from '../shared/message-failure.mjs';
+import { normalizeReactionConfig, resolveChannelReactions } from '../shared/reaction-config.mjs';
 import {
   deriveWhatsappBotId,
   maskWhatsappAccount,
@@ -276,6 +277,27 @@ export class WhatsappController {
     return this.status();
   }
 
+  /** Persist the status reactions; the bridge is rebuilt with the new marks. */
+  async setReactions(botId, value) {
+    if (this.#closed) throw new Error('WhatsApp controller is closed');
+    const reactions = normalizeReactionConfig(value);
+    if (!reactions) throw new TypeError('Reactions must carry processing, success and error');
+    const config = this.#configStore.get(botId);
+    if (!config) throw new Error('Unknown WhatsApp bot');
+    await this.#withBotTransition(botId, async () => {
+      if (this.#closed) throw new Error('WhatsApp controller is closed');
+      const saved = await atConnectionStage(
+        'account.save',
+        () => this.#configStore.save({ ...config, reactions }),
+        'account-config',
+      );
+      await this.#startRuntime(saved);
+      this.#errors.delete(botId);
+      this.#touch();
+    });
+    return this.status();
+  }
+
   async deleteBot(botId) {
     const warnings = [];
     const config = this.#configStore.get(botId);
@@ -333,6 +355,8 @@ export class WhatsappController {
         },
         lastMessageError: publicMessageFailure(runtimeStatus?.lastMessageError),
         accessPolicy: normalizeWhatsappAccessPolicy(config),
+        // The effective set, defaults included.
+        reactions: resolveChannelReactions('whatsapp', config.reactions),
         error: structuredClone(runtimeStatus?.error ?? this.#errors.get(config.botId) ?? null),
       };
     });

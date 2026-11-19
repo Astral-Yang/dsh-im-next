@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { normalizeReactionConfig } from './reaction-config.mjs';
 
 const EMPTY_DOCUMENT = Object.freeze({ version: 1, bots: Object.freeze([]) });
 
@@ -154,6 +155,17 @@ export class TokenBotConfigStore {
     if (derived.botId !== botId || derived.tokenRef !== tokenRef) return null;
     const extension = this.#normalizeBotExtension(value);
     if (!extension || typeof extension !== 'object' || Array.isArray(extension)) return null;
+    // Absent stays absent: the runtime then falls back to the channel catalog,
+    // so an upgrade never rewrites a bot that never chose its own reactions.
+    let reactions;
+    if (Object.hasOwn(value, 'reactions')) {
+      try {
+        reactions = normalizeReactionConfig(value.reactions);
+      } catch {
+        return null;
+      }
+      if (!reactions) return null;
+    }
     return Object.freeze({
       botId,
       platformId,
@@ -162,6 +174,7 @@ export class TokenBotConfigStore {
       username: cleanString(value.username),
       createdAt: cleanString(value.createdAt) ?? new Date().toISOString(),
       connectedAt: cleanString(value.connectedAt),
+      ...(reactions ? { reactions } : {}),
       ...extension,
     });
   }

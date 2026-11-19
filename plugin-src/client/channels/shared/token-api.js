@@ -12,12 +12,25 @@ import {
   SET_THINKING_CADENCE_ENDPOINT,
 } from '../../../../src/channels/shared/thinking-cadence.mjs';
 import { normalizeSendLimitPerMinute, SET_SEND_LIMIT_ENDPOINT } from '../../../../src/channels/shared/send-limit.mjs';
+import {
+  normalizeReactionConfig,
+  SET_REACTIONS_ENDPOINT,
+} from '../../../../src/channels/shared/reaction-config.mjs';
 import { channelName, localizeTemplate, localizeText } from '../../i18n.js';
 
 const ACCOUNT_STATES = new Set(['connected', 'connecting', 'offline', 'error']);
 
 function isRecord(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+/** A malformed stored value must not break the whole bot card. */
+function safeReactions(value) {
+  try {
+    return normalizeReactionConfig(value);
+  } catch {
+    return null;
+  }
 }
 
 function text(value, fallback, max = 240) {
@@ -50,6 +63,7 @@ export const TOKEN_BOT_ENDPOINTS = Object.freeze({
   setThinkingTraces: 'bot.thinking-traces.set',
   setThinkingCadence: SET_THINKING_CADENCE_ENDPOINT,
   setSendLimit: SET_SEND_LIMIT_ENDPOINT,
+  setReactions: SET_REACTIONS_ENDPOINT,
 });
 
 export function createTokenChannelApi(channel, connectionSummary, {
@@ -88,6 +102,9 @@ export function createTokenChannelApi(channel, connectionSummary, {
       thinkingIntervalSeconds: normalizeThinkingIntervalSeconds(value.thinkingIntervalSeconds),
       // Absent or unusable falls back to the same default the backend applies.
       sendLimitPerMinute: normalizeSendLimitPerMinute(value.sendLimitPerMinute),
+      // Null means the channel has no status reaction at all (email), so the
+      // panel stays hidden instead of offering a setting that does nothing.
+      reactions: safeReactions(value.reactions),
       ...(Object.hasOwn(value, 'accessPolicy')
         ? { accessPolicy: normalizeAccessPolicy(value.accessPolicy) }
         : {}),

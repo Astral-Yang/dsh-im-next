@@ -2,6 +2,7 @@ import { extractConnectionEvidence, atConnectionStage, createConnectionDiagnosti
 import { connectionTestMessage } from './connection-test.mjs';
 import { t } from './i18n.mjs';
 import { publicMessageFailure } from './message-failure.mjs';
+import { normalizeReactionConfig, resolveChannelReactions } from './reaction-config.mjs';
 
 function cleanString(value) {
   return typeof value === 'string' && value.trim() ? value.trim() : null;
@@ -207,6 +208,20 @@ export class TokenBotController {
     return this.status();
   }
 
+  /**
+   * Persist this bot's status reactions.
+   *
+   * The runtime is rebuilt with the saved values, so the very next message uses
+   * the new marks. A channel without any native reaction keeps accepting the
+   * call — storing a set it will never use is harmless — which lets one shared
+   * settings panel serve every channel.
+   */
+  async setReactions(botId, value) {
+    const reactions = normalizeReactionConfig(value);
+    if (!reactions) throw new TypeError('Reactions must carry processing, success and error');
+    return this.updateBotConfig(botId, (config) => ({ ...config, reactions }));
+  }
+
   async sendConnectionTest(botId) {
     const config = this.#configStore.get(botId);
     if (!config) throw new Error(`Unknown ${this.#descriptor.label} bot`);
@@ -331,6 +346,9 @@ export class TokenBotController {
         },
         lastMessageError: publicMessageFailure(runtimeStatus?.lastMessageError),
         error: structuredClone(runtimeStatus?.error ?? this.#errors.get(config.botId) ?? null),
+        // The effective set, defaults included: the panel edits what the
+        // channel would actually use, not an empty form.
+        reactions: resolveChannelReactions(this.#descriptor.key, config.reactions),
       };
     });
     const connectedCount = bots.filter((bot) => bot.connected).length;

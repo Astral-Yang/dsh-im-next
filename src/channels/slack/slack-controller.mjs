@@ -5,6 +5,7 @@ import { t } from '../shared/i18n.mjs';
 import { deriveSlackBotIdentity, maskSlackBotId } from './config-store.mjs';
 import { inspectSlackCredentials } from './slack-api.mjs';
 import { SLACK_DESCRIPTOR } from './slack-bridge.mjs';
+import { normalizeReactionConfig, resolveChannelReactions } from '../shared/reaction-config.mjs';
 
 function cleanString(value) {
   return typeof value === 'string' && value.trim() ? value.trim() : null;
@@ -175,6 +176,36 @@ export class SlackController {
     return this.status();
   }
 
+  /** Persist this bot's status reactions and restart it with the new marks. */
+  async updateReactions(botId, value) {
+    const reactions = normalizeReactionConfig(value);
+    if (!reactions) throw new TypeError('Reactions must carry processing, success and error');
+    const config = this.#configStore.get(botId);
+    if (!config) throw new Error('Unknown Slack bot');
+    await this.#withBotTransition(botId, async () => {
+      const saved = await atConnectionStage(
+        'account.save',
+        () => this.#configStore.save({ ...config, reactions }),
+        'account-config',
+      );
+      const resolved = await this.#resolveCredentials(saved);
+      if (!resolved) throw new Error('Slack bot credentials are missing');
+      try {
+        await this.#startRuntime(saved, resolved);
+        this.#errors.delete(botId);
+      } catch (error) {
+        this.#errors.set(botId, this.#failure(error,
+          'connection-failed',
+          t('Slack Socket Mode 连接仍未就绪，请检查两个 Token。'),
+        ));
+        throw error;
+      } finally {
+        this.#touch();
+      }
+    });
+    return this.status();
+  }
+
   async sendConnectionTest(botId) {
     const config = this.#configStore.get(botId);
     if (!config) throw new Error('Unknown Slack bot');
@@ -293,6 +324,9 @@ export class SlackController {
         },
         lastMessageError: publicMessageFailure(runtimeStatus?.lastMessageError),
         error: structuredClone(runtimeStatus?.error ?? this.#errors.get(config.botId) ?? null),
+        // The effective set, defaults included, so the panel edits what the
+        // channel would actually use.
+        reactions: resolveChannelReactions('slack', config.reactions),
       };
     });
     const connected = bots.filter((bot) => bot.connected).length;

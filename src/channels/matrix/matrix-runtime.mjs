@@ -44,6 +44,7 @@ import { createEventLru, resolveReplyChain } from '../shared/conversation/reply-
 import { renderContextEntries } from '../shared/conversation/context-builder.mjs';
 import { TRIGGER_REPLY_MODES } from '../shared/conversation/trigger-policy.mjs';
 import { chunkMarkdownParts } from '../shared/markdown-chunks.mjs';
+import { DISABLED_REACTIONS } from '../shared/reaction-config.mjs';
 
 const RECONNECT_DELAYS_MS = Object.freeze([1_000, 3_000, 5_000, 10_000, 30_000]);
 const SYNC_LONG_POLL_MS = 30_000;
@@ -423,13 +424,16 @@ export class MatrixRuntime {
     this.#clock = new ClockSkewGuard({});
     this.#ring.seed(this.#state.snapshot?.()?.seenMessageIds ?? []);
     this.#bridge = new MatrixHarnessBridge({
-      descriptor: { ...MATRIX_DESCRIPTOR, reactions: this.#config.reactions ? MATRIX_DESCRIPTOR.reactions : {} },
+      descriptor: MATRIX_DESCRIPTOR,
       bot: this.#createBotClient(),
       harness: this.#harness,
       state: this.#state,
       contextEnhancement: this.#contextEnhancement,
       accessPolicy: this.#accessPolicy,
       status: this.#status,
+      // Matrix stores this as a boolean switch, not a three-state set: off
+      // disables every mark, on keeps the channel default.
+      reactions: this.#config.reactions === false ? DISABLED_REACTIONS : undefined,
       logger: this.#logger,
       replyTimeoutMs: this.#replyTimeoutMs,
       autoSteerSameSender: this.#autoSteerSameSender,

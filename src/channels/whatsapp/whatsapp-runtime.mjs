@@ -896,6 +896,7 @@ export class WhatsappRuntime {
           equals: whatsappAccessPolicyIdsEqual,
         } : undefined,
         status: this.#status,
+        reactions: this.#config.reactions,
         logger: this.#logger,
         replyTimeoutMs: this.#replyTimeoutMs,
         signal: controller.signal,

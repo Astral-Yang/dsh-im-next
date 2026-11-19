@@ -40,11 +40,22 @@ export function beginStatusReaction({
   label = 'channel',
   timeoutMs = DEFAULT_TIMEOUT_MS,
 } = {}) {
+  // An empty `processing` mark is allowed: a channel may only want to announce
+  // the terminal state. `null` is the older spelling of "no mark", so both
+  // normalize to the empty string the transition already understands.
+  const marks = {
+    processing: typeof reactions?.processing === 'string' ? reactions.processing : null,
+    success: typeof reactions?.success === 'string' ? reactions.success
+      : reactions?.success === null ? '' : null,
+    error: typeof reactions?.error === 'string' ? reactions.error
+      : reactions?.error === null ? '' : null,
+  };
   if (!target
     || typeof adapter?.addReaction !== 'function'
     || typeof adapter?.removeReaction !== 'function'
-    || typeof reactions?.processing !== 'string'
-    || !reactions.processing
+    || marks.processing === null
+    || marks.success === null
+    || marks.error === null
     || !Number.isSafeInteger(timeoutMs)
     || timeoutMs <= 0) return NOOP_REACTION;
 
@@ -92,7 +103,7 @@ export function beginStatusReaction({
   // Calling an async function starts the provider request synchronously up to
   // its first await, while the returned tail remains completely detached from
   // normal message processing.
-  let tail = transition(reactions.processing);
+  let tail = transition(marks.processing);
   const finish = (emoji) => {
     if (terminal) return;
     terminal = true;
@@ -101,8 +112,8 @@ export function beginStatusReaction({
   };
 
   return Object.freeze({
-    success: () => finish(reactions.success),
-    error: () => finish(reactions.error),
+    success: () => finish(marks.success),
+    error: () => finish(marks.error),
     clear: () => finish(null),
     settled: () => tail,
   });

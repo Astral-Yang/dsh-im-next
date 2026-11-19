@@ -166,6 +166,25 @@ After the model calls the file-return tool, the plugin hands the specified file 
 | WhatsApp | The linked session must support Document Messages; the WhatsApp/Baileys response determines the actual range. |
 | Matrix | The homeserver must allow media uploads; its media repository configuration decides the real per-file limit. When an upload is rejected, the plugin asks you to check the media size limit and upload permissions. |
 
+### Status reactions
+
+When the bot receives a message it marks that message while it works, then replaces the mark with success or failure when the turn ends. This replaces the "working…" placeholder on some channels, so the conversation stays quieter. A reaction the platform does not accept simply leaves no mark; the reply itself is unaffected.
+
+| Channel | Processing | Success | Error | Configurable |
+| --- | --- | --- | --- | --- |
+| Telegram | 👀 | empty | 👎 | yes |
+| Discord | 👀 | ✅ | ❌ | yes |
+| Slack | `eyes` | `white_check_mark` | `x` | yes |
+| KOOK | `[#128064;]` | `[#9989;]` | `[#10060;]` | yes |
+| WhatsApp | 👀 | ✅ | ❌ | yes |
+| Matrix | 👀 | ✔ | ✕ | on/off only |
+| DingTalk / Feishu | fixed marks from each platform | | | no |
+| Weixin / WeCom / WeCom App / iMessage / email | the platform has no message-reaction capability | | | — |
+
+Customize at **DSH Settings → IM Bots → channel → bot card → Status reactions**. Each field uses the channel's own notation: a literal emoji on Telegram, Discord, Matrix and WhatsApp; an emoji name without colons on Slack (`eyes`); a literal emoji on KOOK too, where 👀 is converted to the bracketed code `[#128064;]` on save and that code stays visible under the field. Empty leaves that state unmarked: an empty processing field only skips the initial mark while the success/error mark still appears; three empty fields switch status reactions off entirely.
+
+Saving reconnects the bot once so the next message uses the new marks. Platforms only accept their own emoji: a wrong value leaves no mark, and the reply still arrives.
+
 ## AI Office Connector
 
 [Read the AI Office Connector guide](docs/AI-Office-Connector.en.md)
