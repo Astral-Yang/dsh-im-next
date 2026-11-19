@@ -8,6 +8,7 @@ import { AccountSettingsToggle, CollapsibleAccountSection } from '../shared/coll
 import { channelName, h, localizeTemplate } from '../../i18n.js';
 import { WorkspaceEditor } from '../../workspace-editor.js';
 import { ContextEnhancementEditor } from '../../context-enhancement.js';
+import { ReactionsSettings } from '../shared/reactions-settings.js';
 import {
   AgentPresetCatalogContext,
   AgentPresetEditor,
@@ -197,6 +198,9 @@ export function WhatsappAccountCard({
   onModelSave,
   onAgentPresetSave,
   onContextEnhancementSave,
+  rpcCall,
+  endpoints,
+  onChanged,
   onRequestRemove,
   onConfirmRemove,
   onCancelRemove,
@@ -260,6 +264,14 @@ export function WhatsappAccountCard({
         disabled: Boolean(busy),
         onSave: onContextEnhancementSave,
       }),
+      account.reactions ? h(ReactionsSettings, {
+        account,
+        channelKey: 'whatsapp',
+        busy: Boolean(busy),
+        rpcCall,
+        endpoints,
+        onChanged,
+      }) : null,
       h('div', { className: 'ddt-accountFooter dim-cardFooter' },
         h('div', { className: 'dim-cardFooterLayout' },
           h('div', { className: 'ddt-actions dim-cardActions' },
@@ -551,6 +563,9 @@ export function WhatsappSettingsTab({ rpcCall }) {
               WHATSAPP_ENDPOINTS.setContextEnhancement,
               { botId: account.botId, config },
             ),
+            rpcCall,
+            endpoints: WHATSAPP_ENDPOINTS,
+            onChanged: () => { void loadStatus({ silent: true }); },
             onRequestRemove: () => setRemoveTarget(account.botId),
             onCancelRemove: () => setRemoveTarget(null),
             onConfirmRemove: async () => {

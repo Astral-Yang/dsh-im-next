@@ -6,6 +6,7 @@ import { normalizeModelCatalog, normalizeModelSelection, SET_MODEL_ENDPOINT } fr
 import { normalizeLastMessageError } from '../../last-message-error.js';
 import { normalizeAccessPolicy } from '../../../../src/channels/shared/access-policy.mjs';
 import { normalizeContextEnhancementConfig } from '../../../../src/channels/shared/context-enhancement.mjs';
+import { normalizeReactionConfig, SET_REACTIONS_ENDPOINT } from '../../../../src/channels/shared/reaction-config.mjs';
 
 export const WHATSAPP_RPC_CHANNEL = '/whatsapp';
 
@@ -17,6 +18,7 @@ export const WHATSAPP_ENDPOINTS = Object.freeze({
   reconnectBot: 'bot.reconnect',
   deleteBot: 'bot.delete',
   setAccessPolicy: 'bot.access-policy.set',
+  setReactions: SET_REACTIONS_ENDPOINT,
   setAlias: 'bot.alias.set',
   setWorkspace: 'bot.workspace.set',
   setModel: SET_MODEL_ENDPOINT,
@@ -90,6 +92,14 @@ export function normalizeProvisioning(value, now = Date.now()) {
   return result;
 }
 
+function safeReactions(value) {
+  try {
+    return normalizeReactionConfig(value);
+  } catch {
+    return null;
+  }
+}
+
 function normalizeBot(value) {
   if (!isRecord(value) || !id(value.botId)) return undefined;
   const connected = value.connected === true;
@@ -105,6 +115,8 @@ function normalizeBot(value) {
     ...(Object.hasOwn(value, 'accessPolicy')
       ? { accessPolicy: normalizeAccessPolicy(value.accessPolicy) }
       : {}),
+    // Null means the backend reported no reaction set; the panel then stays hidden.
+    reactions: safeReactions(value.reactions),
     bot: {
       ...normalizeBotAlias(value.bot),
       name: text(value.bot?.name, 'WhatsApp机器人', 100),

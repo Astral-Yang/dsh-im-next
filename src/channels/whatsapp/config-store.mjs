@@ -3,6 +3,7 @@ import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
 import { t } from '../shared/i18n.mjs';
+import { normalizeReactionConfig } from '../shared/reaction-config.mjs';
 
 const EMPTY_DOCUMENT = Object.freeze({ version: 2, bots: Object.freeze([]) });
 const BOT_ID_PATTERN = /^whatsapp_[a-f0-9]{24}$/;
@@ -156,6 +157,16 @@ export class WhatsappConfigStore {
     } catch {
       return null;
     }
+    // Absent stays absent: the runtime then falls back to the channel catalog.
+    let reactions;
+    if (Object.hasOwn(value, 'reactions')) {
+      try {
+        reactions = normalizeReactionConfig(value.reactions);
+      } catch {
+        return null;
+      }
+      if (!reactions) return null;
+    }
     return Object.freeze({
       botId,
       accountJid,
@@ -164,6 +175,7 @@ export class WhatsappConfigStore {
       createdAt: cleanString(value.createdAt) ?? new Date().toISOString(),
       connectedAt: cleanString(value.connectedAt),
       ...accessPolicy,
+      ...(reactions ? { reactions } : {}),
     });
   }
 

@@ -77,6 +77,7 @@ import {
 } from './message-failure.mjs';
 import { logDeliveryFailure } from './delivery-failure-log.mjs';
 import { beginStatusReaction } from './status-reaction.mjs';
+import { resolveChannelReactions } from './reaction-config.mjs';
 import { startNewConversation, isNewCommand, newCommandTitle } from './new-command.mjs';
 import {
   isSessionNavCommand,
@@ -206,6 +207,8 @@ export class TextHarnessBridge {
   #contextEnhancement;
   #accessPolicy;
   #thinkingTraces;
+  // Resolved once per bridge: stored config over the channel's default catalog.
+  #reactions;
   #status;
   #logger;
   #replyTimeoutMs;
@@ -256,6 +259,7 @@ export class TextHarnessBridge {
     contextEnhancement,
     accessPolicy,
     thinkingTraces = false,
+    reactions = undefined,
     status = createTextBridgeStatus(),
     logger = console,
     replyTimeoutMs = 600_000,
@@ -280,6 +284,12 @@ export class TextHarnessBridge {
     this.#contextEnhancement = contextEnhancement;
     this.#accessPolicy = accessPolicy;
     this.#thinkingTraces = thinkingTraces;
+    // `undefined` means "this channel stored nothing": the catalog default (or
+    // the descriptor's own set) still applies. A malformed value throws rather
+    // than silently reactivating an emoji the user removed.
+    this.#reactions = resolveChannelReactions(descriptor.key, reactions)
+      ?? descriptor.reactions
+      ?? null;
     this.#status = status;
     this.#logger = logger;
     this.#replyTimeoutMs = replyTimeoutMs;
@@ -383,7 +393,7 @@ export class TextHarnessBridge {
       target: normalized.kind === 'direct' || normalized.addressed === true
         ? normalized.reactionTarget
         : null,
-      reactions: this.#descriptor.reactions,
+      reactions: this.#reactions,
       status: this.#status,
       logger: this.#logger,
       label: this.#descriptor.key,

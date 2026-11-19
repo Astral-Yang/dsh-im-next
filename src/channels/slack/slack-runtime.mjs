@@ -628,6 +628,7 @@ export class SlackRuntime {
         contextEnhancement: this.#contextEnhancement,
         accessPolicy: this.#accessPolicy,
         status: this.#status,
+        reactions: this.#config.reactions,
         logger: this.#logger,
         replyTimeoutMs: this.#replyTimeoutMs,
         signal: controller.signal,

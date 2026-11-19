@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { CredentialActionIcon, CredentialBindingPanel } from '../../credential-binding.js';
 import { AccountSettingsToggle, CollapsibleAccountSection } from './collapsible-account.js';
+import { ReactionsSettings } from './reactions-settings.js';
 import { channelName, h, localizeTemplate, localizeText } from '../../i18n.js';
 import { installDingtalkStyles } from '../dingtalk/styles.js';
 import { WorkspaceEditor } from '../../workspace-editor.js';
@@ -83,6 +84,9 @@ export function createTokenChannelSettings(definition) {
     accountSettingsEndpoint = null,
   } = definition;
 
+  // 回应表情按渠道键归一；渠道卡片用的是展示名（KOOK / Matrix），与键的大小写不同。
+  const reactionKey = definition.reactionKey ?? String(channel).toLowerCase();
+
   function AccountCard({ account, busy, testNotice, removing, onReconnect, onWorkspaceSave, onAliasSave, onModelSave, onAgentPresetSave, onContextEnhancementSave, onAccountSettingsSave, onRequestRemove, onConfirmRemove, onCancelRemove, rpcCall, reload }) {
     const state = busy === 'reconnect' ? 'connecting' : account.state;
     const tone = account.connected ? 'success' : state === 'error' ? 'error' : 'warning';
@@ -142,6 +146,15 @@ export function createTokenChannelSettings(definition) {
           disabled: Boolean(busy),
           onSave: onContextEnhancementSave,
         }),
+        // 只在渠道确实会留表情时出现：后台把「没有原生表情」的渠道传成 null。
+        account.reactions ? h(ReactionsSettings, {
+          account,
+          channelKey: reactionKey,
+          busy: Boolean(busy),
+          rpcCall,
+          endpoints,
+          onChanged: reload,
+        }) : null,
         AccountSettings ? h(AccountSettings, {
           account,
           busy: Boolean(busy),

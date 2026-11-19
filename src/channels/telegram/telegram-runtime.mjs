@@ -1683,6 +1683,7 @@ export class TelegramRuntime {
         accessPolicy: this.#accessPolicy,
         // Default ON; an explicit false in the bot config opts out.
         thinkingTraces: this.#config?.thinkingTraces !== false,
+        reactions: this.#config.reactions,
         status: this.#status,
         logger: this.#logger,
         replyTimeoutMs: this.#replyTimeoutMs,

@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { normalizeReactionConfig } from '../shared/reaction-config.mjs';
 import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
@@ -122,6 +123,16 @@ export class SlackConfigStore {
     if (derived.botId !== botId
       || derived.botTokenRef !== botTokenRef
       || derived.appTokenRef !== appTokenRef) return null;
+    // Absent stays absent: the runtime then falls back to the channel catalog.
+    let reactions;
+    if (Object.hasOwn(value, 'reactions')) {
+      try {
+        reactions = normalizeReactionConfig(value.reactions);
+      } catch {
+        return null;
+      }
+      if (!reactions) return null;
+    }
     return Object.freeze({
       botId,
       platformId,
@@ -133,6 +144,7 @@ export class SlackConfigStore {
       teamName: cleanString(value.teamName),
       createdAt: cleanString(value.createdAt) ?? new Date().toISOString(),
       connectedAt: cleanString(value.connectedAt),
+      ...(reactions ? { reactions } : {}),
     });
   }
 

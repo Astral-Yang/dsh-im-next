@@ -12,6 +12,7 @@ import { resolveRpcAuthority } from '../../rpc-authority.mjs';
 import { publicWorkspaceError, SET_WORKSPACE_ENDPOINT, validWorkspacePayload } from '../shared/workspace-rpc.mjs';
 import { SET_AGENT_PRESET_ENDPOINT, validAgentPresetPayload } from '../shared/agent-preset-rpc.mjs';
 import { SET_MODEL_ENDPOINT, validModelPayload } from '../shared/model-setting-rpc.mjs';
+import { SET_REACTIONS_ENDPOINT, validReactionsPayload } from '../shared/reactions-rpc.mjs';
 
 export const WHATSAPP_RPC_CHANNEL = '/whatsapp';
 export const WHATSAPP_ENDPOINTS = Object.freeze({
@@ -28,6 +29,7 @@ export const WHATSAPP_ENDPOINTS = Object.freeze({
   setAgentPreset: SET_AGENT_PRESET_ENDPOINT,
   setContextEnhancement: SET_CONTEXT_ENHANCEMENT_ENDPOINT,
   setBusyMessageMode: SET_MESSAGE_MODE_ENDPOINT,
+  setReactions: SET_REACTIONS_ENDPOINT,
 });
 export const WHATSAPP_RPC_ENDPOINTS = Object.freeze(Object.values(WHATSAPP_ENDPOINTS));
 
@@ -89,6 +91,10 @@ function payloadFailure(endpoint, payload) {
   if (endpoint === WHATSAPP_ENDPOINTS.setContextEnhancement) {
     return validContextEnhancementPayload(payload)
       ? null : '请提交有效的上下文增强设置。';
+  }
+  if (endpoint === WHATSAPP_ENDPOINTS.setReactions) {
+    return validReactionsPayload(payload)
+      ? null : '请提交有效的回应表情设置。';
   }
   return 'Unknown WhatsApp endpoint.';
 }
@@ -225,6 +231,9 @@ export function createWhatsappRpcHandler(controller, { encodeQr = qrDataUrl } = 
           payload.alias,
           (status) => publicStatus(status, cachedEncode),
         );
+      } else if (endpoint === WHATSAPP_ENDPOINTS.setReactions) {
+        if (typeof controller.setReactions !== 'function') throw new Error('Reaction update is unavailable');
+        value = await publicStatus(await controller.setReactions(payload.botId, payload.reactions), cachedEncode);
       } else if (endpoint === WHATSAPP_ENDPOINTS.setAccessPolicy) {
         if (typeof controller.updateAccessPolicy !== 'function') throw new Error('Access policy update is unavailable');
         value = await controller.updateAccessPolicy(

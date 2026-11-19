@@ -105,3 +105,47 @@ test('a channel can end a turn with no reaction at all', async () => {
   assert.equal(status.reactionsAdded, 1);
   assert.equal(status.reactionsRemoved, 1);
 });
+
+test('an empty processing mark still lets the terminal mark appear', async () => {
+  const calls = [];
+  const status = {};
+  const reaction = beginStatusReaction({
+    adapter: {
+      addReaction: async (target, emoji) => {
+        calls.push(['add', emoji]);
+        return `key:${emoji}`;
+      },
+      removeReaction: async (target, key) => calls.push(['remove', key]),
+    },
+    target: 'source-message',
+    reactions: { processing: '', success: 'done', error: 'error' },
+    status,
+    logger: { warn() {} },
+  });
+
+  reaction.success();
+  await reaction.settled();
+
+  assert.deepEqual(calls, [['add', 'done']], 'no processing mark was ever added');
+  assert.equal(status.reactionsAdded, 1);
+  assert.equal(status.reactionsRemoved ?? 0, 0);
+});
+
+test('a reaction object missing a terminal state is ignored rather than crashing', async () => {
+  const calls = [];
+  const reaction = beginStatusReaction({
+    adapter: {
+      addReaction: async (target, emoji) => { calls.push(['add', emoji]); return emoji; },
+      removeReaction: async (target, key) => calls.push(['remove', key]),
+    },
+    target: 'source-message',
+    reactions: { processing: 'eyes', success: 'done' },
+    status: {},
+    logger: { warn() {} },
+  });
+
+  reaction.success();
+  await reaction.settled();
+
+  assert.deepEqual(calls, []);
+});
