@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { callManagementRpc, registerManagementRpc } from '../plugin-src/management-rpc.mjs';
 import { installInboundTtlRpc } from '../plugin-src/host/inbound-ttl-rpc.mjs';
+import { DEFAULT_IMAGE_INPUT_SETTINGS } from '../src/channels/shared/image-input-policy.mjs';
 import { managementFetch } from './fixtures/management-rpc.mjs';
 
 function fixture(handler, options) {
@@ -146,7 +147,7 @@ test('general settings honor the configured authority for every read, write and 
     let operations = 0;
     let ttlHours = 24;
     let groupHistoryRetentionDays = 14;
-    const image = { maxDownloadMb: 30, maxImageMb: 6, maxTotalMb: 20, maxImages: 20 };
+    const image = { ...DEFAULT_IMAGE_INPUT_SETTINGS, maxImageMb: 6 };
     const sweep = { deletedDirectories: 0, sweptWorkspaces: 0 };
     const ctx = { connection: { fetch: managementFetch((_channel, handler) => { call = handler; }) } };
     installInboundTtlRpc(ctx, {

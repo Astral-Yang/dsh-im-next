@@ -1328,7 +1328,8 @@ export class QqHarnessBridge {
       }
 
       let content = hasImages || hasReply
-        ? await promptContentForInboundMessage(promptMessage, { signal: this.#signal, deferImages: true })
+        ? await promptContentForInboundMessage(promptMessage, { signal: this.#signal, deferImages: true,
+            imagePrompt: () => this.#harness.getImageInputPrompt?.() })
         : undefined;
       const snapshot = this.#acceptedMessageIds.get(messageId);
       let contextEnhanced = false;

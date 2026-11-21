@@ -106,7 +106,7 @@ export function ImageInputSettings({ rpcCall }) {
     const settings = normalizeImageInputSettings(values);
     setSaved(false);
     if (!settings) {
-      setError('图片限制无效：请输入正整数，原图接收上限和总量上限不能小于单图上限。');
+      setError('图片设置无效：图片上限需为正整数，且总量与接收上限不能小于单图上限；提示词最多 1000 个字符。');
       return;
     }
     saving.current = true;
@@ -150,6 +150,20 @@ export function ImageInputSettings({ rpcCall }) {
             value: values[key], disabled: phase !== 'ready',
             onChange: (event) => { setValues((current) => ({ ...current, [key]: event.target.value })); setSaved(false); setError(null); },
           })))),
+      h('div', { className: 'dim-imageSettingsPrompt' },
+        h('label', { htmlFor: `${id}-imagePrompt` }, '默认图片提示词'),
+        h('textarea', {
+          id: `${id}-imagePrompt`,
+          className: 'dim-globalTtlInput dim-imageSettingsPromptInput',
+          rows: 3,
+          maxLength: 1000,
+          placeholder: DEFAULT_IMAGE_INPUT_SETTINGS.imagePrompt,
+          value: values.imagePrompt,
+          'aria-describedby': `${id}-imagePromptHint`,
+          disabled: phase !== 'ready',
+          onChange: (event) => { setValues((current) => ({ ...current, imagePrompt: event.target.value })); setSaved(false); setError(null); },
+        }),
+        h('p', { id: `${id}-imagePromptHint`, className: 'dim-imageSettingsHint' }, '发送图片但未附带文字时，附加这段提示词；留空使用默认值。')),
       h('div', { className: 'dim-imageSettingsActions' },
         h(GlobalButton, { type: 'submit', kind: 'primary', className: 'dim-globalSaveButton', disabled: phase !== 'ready' }, phase === 'saving' ? '保存中…' : '保存图片设置'),
         phase === 'error' ? h(GlobalButton, { className: 'dim-globalSaveButton', onClick: () => void load() }, '重试') : null)),

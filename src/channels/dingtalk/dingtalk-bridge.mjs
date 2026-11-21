@@ -1402,7 +1402,8 @@ export class DingtalkHarnessBridge {
         signal: this.#signal,
       });
       let content = hasInboundImages(modelMessage) || hasReply
-        ? await promptContentForInboundMessage(modelMessage, { signal: this.#signal, deferImages: true })
+        ? await promptContentForInboundMessage(modelMessage, { signal: this.#signal, deferImages: true,
+            imagePrompt: () => this.#harness.getImageInputPrompt?.() })
         : undefined;
       const snapshot = this.#acceptedMessageIds.get(messageId);
       let contextEnhanced = false;

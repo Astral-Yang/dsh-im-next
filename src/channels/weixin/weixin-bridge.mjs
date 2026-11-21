@@ -921,7 +921,8 @@ export class WeixinHarnessBridge {
       await this.#startTyping(sender, contextToken);
       try {
         let content = hasImages || hasReply
-          ? await promptContentForInboundMessage(promptMessage, { signal: this.#signal, deferImages: true })
+          ? await promptContentForInboundMessage(promptMessage, { signal: this.#signal, deferImages: true,
+              imagePrompt: () => this.#harness.getImageInputPrompt?.() })
           : undefined;
         const captured = this.#acceptedMessageIds.get(messageId);
         let contextEnhanced = false;

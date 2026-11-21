@@ -12,12 +12,13 @@ import {
   InboundFileError,
 } from './inbound-file.mjs';
 import {
+  DEFAULT_IMAGE_PROMPT,
   IMAGE_FILE_FALLBACK_PROMPT,
   contentWithoutImages,
   imageFileSourcesFromContent,
   isModelImageRejection,
 } from './image-prompt.mjs';
-import { imageInputLimits } from './image-input-policy.mjs';
+import { imageInputLimits, normalizeImageInputSettings } from './image-input-policy.mjs';
 import { inboundImagesAsFiles, imageContentFromStaged, isImageAdmissionRejection, IMAGE_HOST_LIMIT_FALLBACK_PROMPT } from './image-input.mjs';
 import { imSourceGuidance } from './im-source-guidance.mjs';
 import { outboundArtifactRegistry } from './semantic/artifact.mjs';
@@ -1938,6 +1939,12 @@ export class HarnessClient {
 
   async getImageInputLimits() {
     return imageInputLimits(await this.#imageInputPolicy());
+  }
+
+  /** The prompt a channel appends when the user sends images without text. */
+  async getImageInputPrompt() {
+    const settings = normalizeImageInputSettings(await this.#imageInputPolicy());
+    return settings?.imagePrompt ?? DEFAULT_IMAGE_PROMPT;
   }
 
   async ask(sessionId, prompt, options = {}) {

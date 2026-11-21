@@ -1491,7 +1491,8 @@ export class WecomHarnessBridge {
       if (streamStarted) streamCtl.start(streamId);
 
       let content = hasImages || hasReply
-        ? await promptContentForInboundMessage(message, { signal: this.#signal, deferImages: true })
+        ? await promptContentForInboundMessage(message, { signal: this.#signal, deferImages: true,
+          imagePrompt: () => this.#harness.getImageInputPrompt?.() })
         : undefined;
       const imageGuidance = quotedImageGuidance(message);
       if (imageGuidance) content.push({ type: 'text', text: imageGuidance });

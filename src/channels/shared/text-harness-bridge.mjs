@@ -1319,7 +1319,8 @@ export class TextHarnessBridge {
       // subject-only instruction is not silently dropped. Falling back to the
       // parsed text kept commands working but lost that decoration entirely.
       let content = hasImages || hasReply
-        ? await promptContentForInboundMessage(message, { signal: this.#signal, deferImages: true })
+        ? await promptContentForInboundMessage(message, { signal: this.#signal, deferImages: true,
+            imagePrompt: () => this.#harness.getImageInputPrompt?.() })
         : cleanText(message.content) || undefined;
       // A room conversation is shared by everyone who addresses the bot in it, so
       // the delivered prompt says whose turn this is. Only the model-facing content

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
-import { mkdtemp, readFile, rm, readdir } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -8,6 +8,7 @@ import sharp from 'sharp';
 import { imageInputLimits, DEFAULT_IMAGE_INPUT_SETTINGS, normalizeImageInputSettings } from '../src/channels/shared/image-input-policy.mjs';
 import { ImageInputSettingsStore } from '../src/channels/shared/image-input-settings-store.mjs';
 import { inboundImagesAsFiles, modelImageFromOriginal, imageContentFromStaged } from '../src/channels/shared/image-input.mjs';
+import { promptContentForMessage } from '../src/channels/shared/image-prompt.mjs';
 import { stageInboundFiles } from '../src/channels/shared/inbound-file.mjs';
 import { HarnessClient, HarnessRpcError } from '../src/channels/shared/harness-client.mjs';
 import { TextHarnessBridge } from '../src/channels/shared/text-harness-bridge.mjs';
@@ -80,9 +81,21 @@ test('settings validate all fields and serialize atomically without changing TTL
   for (const invalid of [{}, null, { ...DEFAULT_IMAGE_INPUT_SETTINGS, maxImages: 0 },
     { ...DEFAULT_IMAGE_INPUT_SETTINGS, maxImageMb: 31 },
     { ...DEFAULT_IMAGE_INPUT_SETTINGS, maxTotalMb: 1 },
-    { ...DEFAULT_IMAGE_INPUT_SETTINGS, maxDownloadMb: Infinity }]) {
+    { ...DEFAULT_IMAGE_INPUT_SETTINGS, maxDownloadMb: Infinity },
+    { ...DEFAULT_IMAGE_INPUT_SETTINGS, imagePrompt: 'x'.repeat(1001) },
+    { ...DEFAULT_IMAGE_INPUT_SETTINGS, imagePrompt: 42 },
+    { ...DEFAULT_IMAGE_INPUT_SETTINGS, imagePrompt: 'bad\u0000prompt' }]) {
     assert.equal(normalizeImageInputSettings(invalid), null);
   }
+  // A document written before the prompt field existed adopts the default.
+  const legacyRoot = await temporary(t);
+  const legacyDoc = join(legacyRoot, 'legacy-image-input.json');
+  await writeFile(legacyDoc, JSON.stringify({ version: 1,
+    imageInput: { maxDownloadMb: 30, maxImageMb: 5, maxTotalMb: 20, maxImages: 20 } }));
+  assert.deepEqual(await new ImageInputSettingsStore(legacyDoc).get(), DEFAULT_IMAGE_INPUT_SETTINGS);
+  assert.equal(normalizeImageInputSettings({ ...DEFAULT_IMAGE_INPUT_SETTINGS, imagePrompt: '  hi  ' }).imagePrompt, 'hi');
+  assert.equal(normalizeImageInputSettings({ ...DEFAULT_IMAGE_INPUT_SETTINGS, imagePrompt: '   ' }).imagePrompt,
+    DEFAULT_IMAGE_INPUT_SETTINGS.imagePrompt);
   const values = [6, 7, 8].map((maxImageMb) => ({ ...DEFAULT_IMAGE_INPUT_SETTINGS, maxImageMb }));
   await Promise.all(values.map((value) => store.set(value)));
   assert.deepEqual(await new ImageInputSettingsStore(path).get(), values[2]);
@@ -91,6 +104,14 @@ test('settings validate all fields and serialize atomically without changing TTL
   const handler = createImageInputRpcHandler(store);
   assert.equal((await handler(IMAGE_INPUT_ENDPOINTS.set, { ...values[2], secret: 'no' })).ok, false);
   assert.equal((await handler(IMAGE_INPUT_ENDPOINTS.get, {})).value.maxImageMb, 8);
+  // A client that predates the prompt field still gets a valid document back.
+  assert.equal((await handler(IMAGE_INPUT_ENDPOINTS.set, {
+    maxDownloadMb: 30, maxImageMb: 5, maxTotalMb: 20, maxImages: 20,
+  })).ok, true);
+  assert.equal((await handler(IMAGE_INPUT_ENDPOINTS.get, {})).value.imagePrompt,
+    DEFAULT_IMAGE_INPUT_SETTINGS.imagePrompt);
+  assert.equal((await handler(IMAGE_INPUT_ENDPOINTS.set,
+    { ...DEFAULT_IMAGE_INPUT_SETTINGS, imagePrompt: 'x'.repeat(1001) })).ok, false);
   assert.equal((await handler(IMAGE_INPUT_ENDPOINTS.set, DEFAULT_IMAGE_INPUT_SETTINGS)).ok, true);
 });
 
@@ -276,4 +297,42 @@ test('WeCom app media downloads pass through real Harness staging and compressio
   const content = prompts[0].content;
   assert.ok(Buffer.from(content.find((part) => part.type === 'image').data, 'base64').length <= 5 * MB);
   assert.deepEqual(await readFile(join(root, manifest(content)[0].path)), image);
+});
+
+test('a configured image prompt replaces the built-in default', async () => {
+  const message = { content: '', images: [{ name: 'shot.png', data: PNG }] };
+  assert.deepEqual(
+    await promptContentForMessage(message, { deferImages: true, imagePrompt: () => '请描述这张截图。' }),
+    [{ type: 'text', text: '请描述这张截图。' }],
+  );
+  assert.deepEqual(
+    await promptContentForMessage(message, { deferImages: true, imagePrompt: '   ' }),
+    [{ type: 'text', text: DEFAULT_IMAGE_INPUT_SETTINGS.imagePrompt }],
+  );
+});
+
+test('the shared bridge forwards the configured prompt for a textless image', async (t) => {
+  const { client, prompts } = await clientFixture(t, {
+    policy: () => ({ ...DEFAULT_IMAGE_INPUT_SETTINGS, imagePrompt: '请描述这张截图。' }),
+  });
+  const seen = new Set();
+  const sent = [];
+  const bridge = new TextHarnessBridge({
+    descriptor: { key: 'telegram', label: 'telegram' },
+    bot: { sendText: async (_target, text) => sent.push(text) },
+    harness: client,
+    state: {
+      sessionFor: () => 'test-session',
+      hasSeen: (id) => seen.has(id),
+      markSeen: async (id) => seen.add(id),
+      setSession: async () => {},
+    },
+  });
+  await bridge.accept({
+    messageId: 'image-prompt', senderId: 'user', kind: 'direct', conversationId: 'user',
+    content: '', images: [{ name: 'shot.png', data: PNG }], replyTarget: {},
+  });
+  assert.deepEqual(sent, ['verified']);
+  assert.equal(prompts.length, 1);
+  assert.equal(prompts[0].content[0].text, '请描述这张截图。');
 });

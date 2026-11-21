@@ -8,6 +8,9 @@ This file records the notable changes in each dsh-im release. Its format follows
 
 ### Added / 新增
 
+- 新增「默认图片提示词」设置：只发送图片、没有附带文字时，原先固定使用「请分析这张图片。」，现在可在「通用设置 → 附件 → 图片输入」自定义（最多 1000 个字符，留空恢复默认）；对所有支持图片输入的渠道生效，带文字的图片消息仍使用用户原文。
+  Adds a “Default image prompt” setting: when a message contains images but no text, the fixed “Analyze this image.” prompt can now be customized under General Settings → Attachments → Image input (up to 1000 characters; leave empty to restore the default). It applies to every channel with image input; images sent with text keep the user's own wording.
+
 - 新增 KOOK 渠道：通过 KOOK 开发者平台的 Bot Token 接入，支持频道与私聊文字消息、群聊 @ 触发、访问控制、图片/文件/视频发送、群消息记录及主动投递；连接层使用 `@kookapp/js-sdk` 的 Gateway 长连接与自动重连。
   Added a KOOK channel: connect with a Bot Token from the KOOK developer platform and use channel and private text messages, group @ mentions, access control, image/file/video delivery, group history, and proactive delivery; the connection layer uses `@kookapp/js-sdk` Gateway long connections with automatic reconnect.
 

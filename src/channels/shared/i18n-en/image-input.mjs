@@ -13,6 +13,9 @@ export default {
   "图片输入": "Image input",
   "查看图片输入说明": "View image input details",
   "适用于支持图片的聊天渠道。原图按附件保留时长保存，发送给模型的副本会自动缩放或压缩；无法直接发送时交给模型按文件处理。": "Applies to chat channels that support images. Originals follow attachment retention settings. Model copies are resized or compressed automatically; images that cannot be sent directly are provided as files.",
+  "图片设置无效：图片上限需为正整数，且总量与接收上限不能小于单图上限；提示词最多 1000 个字符。": "Invalid image settings: limits must be positive integers, the total and receipt limits cannot be smaller than the per-image limit, and the prompt is limited to 1000 characters.",
+  "默认图片提示词": "Default image prompt",
+  "发送图片但未附带文字时，附加这段提示词；留空使用默认值。": "Appended when an image arrives without text; leave empty to use the default.",
   "保存图片设置": "Save image settings",
   "正在读取图片设置…": "Loading image settings…"
 };

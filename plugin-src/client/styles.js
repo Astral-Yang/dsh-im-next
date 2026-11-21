@@ -733,6 +733,10 @@ const CSS = String.raw`
 .dim-imageSettingsField { min-width: 0; display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 160px); align-items: center; gap: 6px 16px; }
 .dim-imageSettingsField label { min-width: 0; color: var(--dsw-alias-label-secondary, #646a73); font-size: 13px; line-height: 20px; overflow-wrap: anywhere; }
 .dim-imageSettingsField .dim-globalTtlInput { width: 100%; min-width: 0; }
+.dim-imageSettingsPrompt { min-width: 0; display: grid; gap: 6px; margin-top: 12px; }
+.dim-imageSettingsPrompt label { color: var(--dsw-alias-label-secondary, #646a73); font-size: 13px; line-height: 20px; }
+.dim-imageSettingsPromptInput { box-sizing: border-box; width: 100%; max-width: none; height: auto; min-height: 76px; padding: 9px 11px; font-family: inherit; line-height: 20px; resize: vertical; }
+.dim-imageSettingsHint { margin: 0; color: var(--dsw-alias-label-secondary, #646a73); font-size: 12px; line-height: 18px; }
 .dim-imageSettingsActions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .dim-globalInline.dim-imageSettingsFeedback { margin: 10px 0 0; }
 @container (max-width: 380px) {

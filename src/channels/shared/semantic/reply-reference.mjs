@@ -142,10 +142,10 @@ export function hasReplyReference(message) {
 
 export async function promptContentForInboundMessage(
   message,
-  { signal, deferImages = false, originalFiles } = {},
+  { signal, deferImages = false, originalFiles, imagePrompt } = {},
 ) {
   if (!hasReplyReference(message)) {
-    return promptContentForMessage(message, { signal, deferImages });
+    return promptContentForMessage(message, { signal, deferImages, imagePrompt });
   }
   const reference = normalizeReference(await resolveReference(message.replyTo, signal));
   // A quoted attachment is part of the user's explicit request. Preserve its
@@ -163,6 +163,6 @@ export async function promptContentForInboundMessage(
     if (!Array.isArray(message.files)) message.files = [];
     message.files.push(...reference.files);
   }
-  const currentContent = await promptContentForMessage(message, { signal, deferImages });
+  const currentContent = await promptContentForMessage(message, { signal, deferImages, imagePrompt });
   return [{ type: 'text', text: replyBlock(reference) }, ...currentContent];
 }

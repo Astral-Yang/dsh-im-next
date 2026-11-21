@@ -5750,6 +5750,7 @@ export class FeishuHarnessBridge {
           signal: this.#signal,
           deferImages: true,
           originalFiles,
+          imagePrompt: () => this.#harness.getImageInputPrompt?.(),
         })
         : input.content;
       const enhanced = enhanceContextContent(original, snapshot, () => ({

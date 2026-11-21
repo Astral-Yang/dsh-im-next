@@ -6,6 +6,24 @@ const DEFAULT_MAX_TOTAL_IMAGE_BYTES = 20 * 1024 * 1024;
 
 export const DEFAULT_IMAGE_PROMPT = '请分析这张图片。';
 
+/** Upper bound for a user-configured image prompt. */
+export const IMAGE_PROMPT_MAX_CHARS = 1000;
+
+/**
+ * Trim a configured prompt and reject values the model would not read as
+ * plain text. An omitted or blank prompt means "use the built-in default".
+ */
+export function normalizeImagePrompt(value) {
+  if (value === undefined || value === null) return DEFAULT_IMAGE_PROMPT;
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed) return DEFAULT_IMAGE_PROMPT;
+  if (trimmed.length > IMAGE_PROMPT_MAX_CHARS) return null;
+  // Newlines and tabs are useful in prompts; other C0 controls are not.
+  if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/u.test(trimmed)) return null;
+  return trimmed;
+}
+
 /**
  * Model-facing guidance appended when the Host refuses image input for the
  * current model and the same images are re-delivered as workspace files.
@@ -194,9 +212,15 @@ export function hasInboundPrompt(message) {
   return Boolean(cleanText(message?.content)) || hasInboundImages(message);
 }
 
+async function resolveImagePrompt(value) {
+  const raw = typeof value === 'function' ? await value() : value;
+  return normalizeImagePrompt(raw) ?? DEFAULT_IMAGE_PROMPT;
+}
+
 export async function promptContentForMessage(message, {
   signal,
   deferImages = false,
+  imagePrompt,
   maxImageBytes = DEFAULT_MAX_IMAGE_BYTES,
   maxImages = DEFAULT_MAX_IMAGES,
   maxTotalImageBytes = DEFAULT_MAX_TOTAL_IMAGE_BYTES,
@@ -214,7 +238,10 @@ export async function promptContentForMessage(message, {
   const content = [];
   let totalImageBytes = 0;
   if (text) content.push({ type: 'text', text });
-  else if (sources.length > 0) content.push({ type: 'text', text: t(DEFAULT_IMAGE_PROMPT) });
+  else if (sources.length > 0) {
+    const prompt = await resolveImagePrompt(imagePrompt);
+    content.push({ type: 'text', text: prompt === DEFAULT_IMAGE_PROMPT ? t(DEFAULT_IMAGE_PROMPT) : prompt });
+  }
 
   if (deferImages) return content;
 
